@@ -184,7 +184,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       }
 
       const shouldFetchDb =
-        !!email &&
+        typeof email === 'string' &&
+        email.length > 0 &&
         (!token.userId ||
           !token.username ||
           token.points === undefined ||
@@ -193,7 +194,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       if (shouldFetchDb) {
         try {
           const dbUser = await prisma.users.findUnique({
-            where: { email },
+            where: { email: email },
           });
 
           if (dbUser) {
@@ -203,8 +204,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             token.profileImageUrl = dbUser.profile_image_url || null;
             token.email = dbUser.email || email;
           }
-        } catch (error) {
-          console.error("Error in jwt callback:", error);
+        } catch (error: any) {
+          console.error("Error in jwt callback:", error?.code, error?.message, "meta:", error?.meta);
         }
       }
       return token;

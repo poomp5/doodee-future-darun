@@ -82,7 +82,7 @@
     "@types/jsonwebtoken": "^9.0.8",
     "@types/node": "^20.17.16",
     "@types/pdf-parse": "^1.1.5",
-    "@types/pg": "^8.11.11",
+    "@types/pg": "^8.11.2",
     "@types/react": "^19.0.8",
     "@types/react-dom": "^19.0.3",
     "eslint": "^9.19.0",
@@ -90,5 +90,8 @@
     "prisma": "^7.5.0",
     "tsx": "^4.21.0",
     "typescript": "^5.7.3"
+  },
+  "overrides": {
+    "@types/pg": "8.11.2"
   }
 }

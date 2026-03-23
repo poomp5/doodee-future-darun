@@ -38,15 +38,6 @@ export default function CommunityPage() {
   const locale = useLocale();
   const router = useRouter();
   const numberLocale = locale === 'th' ? 'th-TH' : 'en-US';
-  const partnerSubtitle =
-    locale === 'en'
-      ? 'A project conducted in collaboration with the'
-      : 'โครงการภายใต้ความร่วมมือกับ';
-  const partnerTitle =
-    locale === 'en'
-      ? 'Student Council of Assumption College Thonburi'
-      : 'สภานักเรียนโรงเรียนอัสสัมชัญธนบุรี';
-
   const [activeTab, setActiveTab] = useState<"community" | "templates">("community");
   const [universities, setUniversities] = useState<FilterOption[]>([]);
   const [faculties, setFaculties] = useState<FilterOption[]>([]);
@@ -277,41 +268,6 @@ export default function CommunityPage() {
 
   return (
     <div className="max-w-6xl mx-auto px-3 md:px-4 py-6 md:py-8 space-y-5 md:space-y-8">
-      {/* Partnership banner */}
-      <div className="bg-gradient-to-r from-pink-50 to-white border border-pink-100 rounded-2xl p-4 md:p-5 flex items-center justify-between gap-4">
-        <a href="https://www.instagram.com/act_stdcl" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 min-w-0 hover:opacity-80 transition">
-          <Image
-            src="/act_stdcl.png"
-            alt={partnerTitle}
-            width={48}
-            height={48}
-            className="rounded-xl shrink-0"
-          />
-          <div className="min-w-0">
-            <p className="text-xs text-gray-500">{partnerSubtitle}</p>
-            <p className="text-sm md:text-base font-bold text-gray-900 truncate">{partnerTitle}</p>
-          </div>
-        </a>
-        <div className="hidden md:inline-flex rounded-full bg-white/80 p-1 shrink-0">
-          <button
-            onClick={() => setActiveTab("community")}
-            className={`px-4 py-1.5 text-sm font-semibold rounded-full transition ${
-              activeTab === "community" ? "bg-pink-600 text-white shadow" : "text-gray-600 hover:text-gray-900"
-            }`}
-          >
-            {t('tabCommunity')}
-          </button>
-          <button
-            onClick={() => setActiveTab("templates")}
-            className={`px-4 py-1.5 text-sm font-semibold rounded-full transition ${
-              activeTab === "templates" ? "bg-pink-600 text-white shadow" : "text-gray-600 hover:text-gray-900"
-            }`}
-          >
-            {t('tabTemplates')}
-          </button>
-        </div>
-      </div>
-
       {/* Mobile tabs */}
       <div className="flex md:hidden rounded-full bg-gray-100 p-1">
         <button

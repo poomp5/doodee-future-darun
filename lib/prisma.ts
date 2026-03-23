@@ -1,18 +1,18 @@
 import { PrismaClient, Prisma } from '../generated/prisma';
 import { PrismaPg } from '@prisma/adapter-pg';
-import { Pool } from 'pg';
+import pg from 'pg';
 import { getPooledDatabaseUrl } from './database-url';
 
 type PrismaGlobal = typeof globalThis & {
   prisma?: PrismaClient;
-  prismaPool?: Pool;
+  prismaPool?: pg.Pool;
 };
 
 const globalForPrisma = globalThis as PrismaGlobal;
 
-function getPgPool(connectionString: string): Pool {
+function getPgPool(connectionString: string): pg.Pool {
   if (!globalForPrisma.prismaPool) {
-    globalForPrisma.prismaPool = new Pool({ connectionString });
+    globalForPrisma.prismaPool = new pg.Pool({ connectionString });
   }
   return globalForPrisma.prismaPool;
 }

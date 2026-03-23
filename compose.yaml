@@ -1,0 +1,25 @@
+services:
+  app:
+    # Komodo already handle image pull with creds. So, i supposed this should work right away (caching). --Harinn
+    image: ghcr.io/pranakorn-group/doodee-future:latest
+    restart: unless-stopped
+    expose:
+      - "3000"
+    env_file:
+      - .env.production
+    environment:
+      - PRISMA_CLIENT_ENGINE_TYPE=binary
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.doodee.rule=Host(`doodee-future.com`)"
+      - "traefik.http.routers.doodee.entrypoints=websecure"
+      - "traefik.http.routers.doodee.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.doodee.tls=true"
+      - "traefik.http.services.doodee.loadbalancer.server.port=3000"
+      - "traefik.docker.network=traefik_network"
+    networks:
+      - traefik_network
+
+networks:
+  traefik_network:
+    external: true

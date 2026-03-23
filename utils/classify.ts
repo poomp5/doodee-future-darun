@@ -1,0 +1,423 @@
+type Faculty = {
+    name: string
+    keywords: string[]
+}
+
+const faculties: Faculty[] = [
+    {
+        name: "วิศวกรรมศาสตร์ (Engineering)",
+        keywords: [
+            // คำภาษาไทย
+            "วิศวกรรม",
+            "เครื่องกล",
+            "โยธา",
+            "ไฟฟ้า",
+            "อิเล็กทรอนิกส์",
+            "หุ่นยนต์",
+            "อัตโนมัติ",
+            "การออกแบบ",
+            "การก่อสร้าง",
+            "ควบคุมระบบ",
+            // คำภาษาอังกฤษ
+            "engineering",
+            "mechanical",
+            "civil",
+            "electrical",
+            "computer",
+            "robotics",
+            "automation",
+            "design",
+            "structure",
+            "CAD",
+            "industrial",
+            "aerospace",
+            "nanotechnology",
+            "biomedical",
+            "environmental",
+            "systems",
+            "power",
+            "control",
+            "telecommunications",
+            "instrumentation",
+            "manufacturing",
+            "materials",
+            "sustainable",
+            "innovation",
+            "simulation",
+        ],
+    },
+    {
+        name: "วิทยาศาสตร์ (Science)",
+        keywords: [
+            // คำภาษาไทย
+            "วิทยาศาสตร์",
+            "ฟิสิกส์",
+            "เคมี",
+            "ชีววิทยา",
+            "คณิตศาสตร์",
+            "สถิติ",
+            "ดาราศาสตร์",
+            "ธรณีวิทยา",
+            "จุลชีววิทยา",
+            "พันธุศาสตร์",
+            // คำภาษาอังกฤษ
+            "science",
+            "physics",
+            "chemistry",
+            "biology",
+            "mathematics",
+            "statistics",
+            "astronomy",
+            "geology",
+            "microbiology",
+            "genetics",
+            "neuroscience",
+            "environmental science",
+            "oceanography",
+            "climatology",
+            "botany",
+            "zoology",
+            "ecology",
+            "research",
+            "laboratory",
+            "analytical",
+            "experimental",
+        ],
+    },
+    {
+        name: "แพทยศาสตร์ (Medicine)",
+        keywords: [
+            // คำภาษาไทย
+            "แพทย์",
+            "การแพทย์",
+            "สุขภาพ",
+            "โรงพยาบาล",
+            "พยาบาล",
+            "เภสัชศาสตร์",
+            "กายภาพบำบัด",
+            "สาธารณสุข",
+            "ศัลยกรรม",
+            "เวชศาสตร์",
+            // คำภาษาอังกฤษ
+            "medicine",
+            "healthcare",
+            "surgery",
+            "clinical",
+            "diagnosis",
+            "treatment",
+            "nursing",
+            "pharmacy",
+            "physical therapy",
+            "public health",
+            "radiology",
+            "anatomy",
+            "physiology",
+            "biochemistry",
+            "pathology",
+            "cardiology",
+            "neurology",
+            "pediatrics",
+            "obstetrics",
+            "gynecology",
+            "emergency",
+            "mental health",
+            "immunology",
+            "oncology",
+        ],
+    },
+    {
+        name: "บริหารธุรกิจ (Business Administration)",
+        keywords: [
+            // คำภาษาไทย
+            "ธุรกิจ",
+            "การตลาด",
+            "บัญชี",
+            "การเงิน",
+            "เศรษฐศาสตร์",
+            "การจัดการ",
+            "ผู้ประกอบการ",
+            "โลจิสติกส์",
+            "กลยุทธ์",
+            "บริหาร",
+            // คำภาษาอังกฤษ
+            "business",
+            "marketing",
+            "accounting",
+            "finance",
+            "economics",
+            "management",
+            "entrepreneurship",
+            "startup",
+            "logistics",
+            "strategy",
+            "operations",
+            "leadership",
+            "innovation",
+            "sales",
+            "supply chain",
+            "business development",
+            "investment",
+            "risk management",
+            "corporate",
+            "human resources",
+            "digital marketing",
+            "e-commerce",
+        ],
+    },
+    {
+        name: "ศิลปศาสตร์ (Liberal Arts)",
+        keywords: [
+            // คำภาษาไทย
+            "ภาษา",
+            "วรรณคดี",
+            "ประวัติศาสตร์",
+            "ปรัชญา",
+            "สังคมวิทยา",
+            "มานุษยวิทยา",
+            "จิตวิทยา",
+            "การสื่อสาร",
+            "สื่อสารมวลชน",
+            "วัฒนธรรม",
+            // คำภาษาอังกฤษ
+            "liberal arts",
+            "literature",
+            "arts",
+            "humanities",
+            "cultural studies",
+            "philosophy",
+            "linguistics",
+            "history",
+            "anthropology",
+            "sociology",
+            "psychology",
+            "media studies",
+            "ethics",
+            "classics",
+            "creative writing",
+            "music",
+            "drama",
+            "film",
+            "visual arts",
+            "cultural analysis",
+        ],
+    },
+    // คณะเพิ่มเติมที่กำลังดังในไทย
+    {
+        name: "นิติศาสตร์ (Law)",
+        keywords: [
+            // คำภาษาไทย
+            "นิติศาสตร์",
+            "กฎหมาย",
+            "นิติ",
+            "ยุติธรรม",
+            "ศาล",
+            "อัยการ",
+            "นักกฎหมาย",
+            // คำภาษาอังกฤษ
+            "law",
+            "legal",
+            "justice",
+            "court",
+            "prosecution",
+            "criminal law",
+            "civil law",
+            "constitution",
+        ],
+    },
+    {
+        name: "สถาปัตยกรรมศาสตร์ (Architecture)",
+        keywords: [
+            // คำภาษาไทย
+            "สถาปัตยกรรม",
+            "ออกแบบ",
+            "การออกแบบ",
+            "การก่อสร้าง",
+            "ผังเมือง",
+            // คำภาษาอังกฤษ
+            "architecture",
+            "design",
+            "urban planning",
+            "city planning",
+            "interior design",
+            "landscape",
+        ],
+    },
+    {
+        name: "เทคโนโลยีสารสนเทศ (Information Technology)",
+        keywords: [
+            // คำภาษาไทย
+            "เทคโนโลยีสารสนเทศ",
+            "คอมพิวเตอร์",
+            "โปรแกรมมิ่ง",
+            "การเขียนโปรแกรม",
+            "ซอฟต์แวร์",
+            // คำภาษาอังกฤษ
+            "information technology",
+            "IT",
+            "computer",
+            "programming",
+            "coding",
+            "software",
+            "network",
+            "cybersecurity",
+            "data",
+            "digital",
+            "tech",
+        ],
+    },
+    {
+        name: "การท่องเที่ยวและการโรงแรม (Tourism and Hospitality)",
+        keywords: [
+            // คำภาษาไทย
+            "ท่องเที่ยว",
+            "โรงแรม",
+            "การท่องเที่ยว",
+            "รีสอร์ท",
+            "การจัดการท่องเที่ยว",
+            // คำภาษาอังกฤษ
+            "tourism",
+            "hospitality",
+            "travel",
+            "resort",
+            "tourism management",
+            "hospitality management",
+            "culinary",
+        ],
+    },
+    {
+        name: "นิเทศศาสตร์ (Communication Arts)",
+        keywords: [
+            // คำภาษาไทย
+            "นิเทศศาสตร์",
+            "สื่อ",
+            "การสื่อสาร",
+            "ประชาสัมพันธ์",
+            "ข่าว",
+            // คำภาษาอังกฤษ
+            "communication",
+            "media",
+            "public relations",
+            "broadcasting",
+            "journalism",
+            "advertising",
+            "digital media",
+        ],
+    },
+    {
+        name: "ศิลปะ (Fine Arts)",
+        keywords: [
+            // คำภาษาไทย
+            "ศิลปะ",
+            "การวาด",
+            "จิตรกรรม",
+            "ประติมากรรม",
+            "งานฝีมือ",
+            // คำภาษาอังกฤษ
+            "fine arts",
+            "art",
+            "painting",
+            "sculpture",
+            "creative",
+            "visual arts",
+            "craft",
+            "illustration",
+        ],
+    },
+    {
+        name: "เศรษฐศาสตร์ (Economics)",
+        keywords: [
+            // คำภาษาไทย
+            "เศรษฐศาสตร์",
+            "เศรษฐกิจ",
+            "ตลาด",
+            "การเงิน",
+            // คำภาษาอังกฤษ
+            "economics",
+            "economy",
+            "finance",
+            "trade",
+            "microeconomics",
+            "macroeconomics",
+            "policy",
+            "analysis",
+            "growth",
+        ],
+    },
+    {
+        name: "จิตวิทยา (Psychology)",
+        keywords: [
+            // คำภาษาไทย
+            "จิตวิทยา",
+            "จิตใจ",
+            "พฤติกรรม",
+            "การบำบัด",
+            // คำภาษาอังกฤษ
+            "psychology",
+            "mental health",
+            "behavior",
+            "therapy",
+            "cognitive",
+            "emotion",
+            "neuroscience",
+        ],
+    },
+    {
+        name: "สังคมศาสตร์ (Social Sciences)",
+        keywords: [
+            // คำภาษาไทย
+            "สังคมศาสตร์",
+            "สังคม",
+            "วัฒนธรรม",
+            "ชุมชน",
+            // คำภาษาอังกฤษ
+            "social sciences",
+            "sociology",
+            "anthropology",
+            "social",
+            "political",
+            "culture",
+            "community",
+            "research",
+            "policy",
+        ],
+    },
+    {
+        name: "การกีฬา (Sports Science)",
+        keywords: [
+            // คำภาษาไทย
+            "กีฬา",
+            "การกีฬา",
+            "ออกกำลังกาย",
+            "สุขภาพ",
+            "การฝึกซ้อม",
+            // คำภาษาอังกฤษ
+            "sports",
+            "sports science",
+            "physical education",
+            "fitness",
+            "exercise",
+            "athletics",
+            "training",
+            "wellness",
+            "kinesiology",
+        ],
+    },
+]
+
+export function classifyFaculty(text: string): { faculty: string; percentage: number }[] {
+    const lowercaseText = text.toLowerCase()
+    const words = lowercaseText.split(/\s+/)
+
+    const results = faculties.map((faculty) => {
+        const matchingKeywords = faculty.keywords.filter((keyword) =>
+            words.some((word) => word.includes(keyword.toLowerCase())),
+        )
+        const percentage = (matchingKeywords.length / faculty.keywords.length) * 100
+        return {
+            faculty: faculty.name,
+            percentage: Math.min(percentage, 100),
+        }
+    })
+
+    return results.filter((result) => result.percentage > 0).sort((a, b) => b.percentage - a.percentage)
+}

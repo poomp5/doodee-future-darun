@@ -1,0 +1,18 @@
+{
+    "regions": ["sin1"],
+    "functions": {
+        "app/api/deepseek/route.ts": {
+            "maxDuration": 60
+        },
+        "app/api/upload/route.ts": {
+            "maxDuration": 60,
+            "memory": 1024
+        }
+    },
+    "git": {
+        "deploymentEnabled": false
+    },
+    "github": {
+        "silent": true
+    }
+}

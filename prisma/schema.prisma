@@ -1,0 +1,1294 @@
+generator client {
+  provider   = "prisma-client-js"
+  output     = "../generated/prisma"
+  engineType = "binary"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Account {
+  id                String  @id
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  User              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  User         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model User {
+  id            String    @id
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  name          String?
+  points        Int       @default(0)
+  Account       Account[]
+  Session       Session[]
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model activities {
+  id                     Int                      @id @default(autoincrement())
+  title                  String                   @db.VarChar(500)
+  description            String?
+  image_url              String?
+  location               String?                  @db.VarChar(500)
+  start_date             DateTime?                @db.Date
+  end_date               DateTime?                @db.Date
+  category               String?                  @default("general") @db.VarChar(100)
+  max_participants       Int?
+  is_active              Boolean?                 @default(true)
+  display_order          Int?                     @default(0)
+  created_at             DateTime?                @default(now()) @db.Timestamptz(6)
+  updated_at             DateTime?                @default(now()) @db.Timestamptz(6)
+  subcategory            String?                  @db.VarChar(100)
+  source                 String?                  @default("other") @db.VarChar(50)
+  link_url               String?
+  deadline               DateTime?                @db.Date
+  price                  Decimal?                 @default(0) @db.Decimal(10, 2)
+  activity_tags          activity_tags[]
+  user_viewed_activities user_viewed_activities[]
+
+  @@index([category], map: "idx_activities_category")
+  @@index([display_order], map: "idx_activities_display_order")
+  @@index([is_active], map: "idx_activities_is_active")
+  @@index([start_date], map: "idx_activities_start_date")
+}
+
+model categories {
+  id              Int             @id @default(autoincrement())
+  group_key       String          @db.VarChar(50)
+  value           String          @unique @db.VarChar(100)
+  label           String          @db.VarChar(100)
+  display_order   Int?            @default(0)
+  is_active       Boolean?        @default(true)
+  created_at      DateTime?       @default(now()) @db.Timestamptz(6)
+  updated_at      DateTime?       @default(now()) @db.Timestamptz(6)
+  category_groups category_groups @relation(fields: [group_key], references: [key], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([display_order], map: "idx_categories_display_order")
+  @@index([group_key], map: "idx_categories_group_key")
+}
+
+model category_groups {
+  id            Int          @id @default(autoincrement())
+  key           String       @unique @db.VarChar(50)
+  label         String       @db.VarChar(100)
+  icon          String?      @default("Layers") @db.VarChar(50)
+  display_order Int?         @default(0)
+  is_active     Boolean?     @default(true)
+  created_at    DateTime?    @default(now()) @db.Timestamptz(6)
+  updated_at    DateTime?    @default(now()) @db.Timestamptz(6)
+  categories    categories[]
+
+  @@index([display_order], map: "idx_category_groups_display_order")
+}
+
+model courses {
+  id                  Int                   @id @default(autoincrement())
+  title               String                @db.VarChar(500)
+  description         String?
+  image_url           String?
+  price               Decimal?              @default(0) @db.Decimal(10, 2)
+  category            String?               @default("general") @db.VarChar(100)
+  duration            String?               @db.VarChar(100)
+  instructor          String?               @db.VarChar(255)
+  is_active           Boolean?              @default(true)
+  display_order       Int?                  @default(0)
+  created_at          DateTime?             @default(now()) @db.Timestamptz(6)
+  updated_at          DateTime?             @default(now()) @db.Timestamptz(6)
+  subcategory         String?               @default("") @db.VarChar(100)
+  source              String?               @default("other") @db.VarChar(50)
+  link_url            String?               @default("")
+  deadline            DateTime?             @db.Date
+  max_participants    Int?
+  course_tags         course_tags[]
+  points_courses      points_courses[]
+  user_viewed_courses user_viewed_courses[]
+
+  @@index([category], map: "idx_courses_category")
+  @@index([display_order], map: "idx_courses_display_order")
+  @@index([is_active], map: "idx_courses_is_active")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model point_activities {
+  id                   String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id              String    @db.Uuid
+  activity_type        String
+  activity_description String?
+  points_awarded       Int
+  status               String?   @default("pending")
+  metadata             Json?
+  completed_at         DateTime? @db.Timestamptz(6)
+  created_at           DateTime? @default(now()) @db.Timestamptz(6)
+  users                users     @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([user_id], map: "idx_point_activities_user_id")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model point_history {
+  id                 String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id            String    @db.Uuid
+  action_type        String
+  action_description String?
+  points_changed     Int
+  balance_before     Int
+  balance_after      Int
+  reference_id       String?   @db.Uuid
+  created_at         DateTime? @default(now()) @db.Timestamptz(6)
+  users              users     @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([created_at(sort: Desc)], map: "idx_point_history_created_at")
+  @@index([user_id], map: "idx_point_history_user_id")
+}
+
+model points_courses {
+  id            Int       @id @default(autoincrement())
+  title         String    @db.VarChar(255)
+  description   String?
+  image_url     String?
+  points_cost   Int?      @default(0)
+  link_url      String?
+  course_id     Int?
+  course_type   String?   @default("custom") @db.VarChar(50)
+  is_active     Boolean?  @default(true)
+  display_order Int?      @default(0)
+  created_at    DateTime? @default(now()) @db.Timestamp(6)
+  updated_at    DateTime? @default(now()) @db.Timestamp(6)
+  courses       courses?  @relation(fields: [course_id], references: [id], onUpdate: NoAction)
+}
+
+model points_rewards {
+  id            Int       @id @default(autoincrement())
+  title         String    @db.VarChar(255)
+  description   String?
+  image_url     String?
+  icon          String?   @default("Gift") @db.VarChar(50)
+  points_cost   Int?      @default(0)
+  reward_type   String?   @default("link") @db.VarChar(50)
+  reward_value  String?
+  stock         Int?
+  is_active     Boolean?  @default(true)
+  display_order Int?      @default(0)
+  created_at    DateTime? @default(now()) @db.Timestamp(6)
+  updated_at    DateTime? @default(now()) @db.Timestamp(6)
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model portfolio_analysis {
+  id                    BigInt      @id @default(autoincrement())
+  user_id               String      @db.Uuid
+  portfolio_id          String?     @db.Uuid
+  strengths             Json?
+  weaknesses            Json?
+  recommended_faculties Json?
+  subject_scores        Json?
+  recommended_courses   Json?
+  advice                String?
+  analyzed_at           DateTime    @default(dbgenerated("timezone('utc'::text, now())")) @db.Timestamptz(6)
+  created_at            DateTime    @default(dbgenerated("timezone('utc'::text, now())")) @db.Timestamptz(6)
+  file_url              String?
+  portfolios            portfolios? @relation(fields: [portfolio_id], references: [id], onUpdate: NoAction)
+  users                 users       @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([analyzed_at(sort: Desc)], map: "idx_portfolio_analysis_analyzed_at")
+  @@index([portfolio_id], map: "idx_portfolio_analysis_portfolio_id")
+  @@index([user_id], map: "idx_portfolio_analysis_user_id")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model portfolio_purchases {
+  id            BigInt   @id @default(autoincrement())
+  user_id       String   @db.Uuid
+  template_name String   @db.VarChar(255)
+  template_type String?  @db.VarChar(50)
+  price         Decimal  @db.Decimal(10, 2)
+  canva_link    String?
+  download_link String?
+  purchased_at  DateTime @default(dbgenerated("timezone('utc'::text, now())")) @db.Timestamptz(6)
+  created_at    DateTime @default(dbgenerated("timezone('utc'::text, now())")) @db.Timestamptz(6)
+  users         users    @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([purchased_at(sort: Desc)], map: "idx_portfolio_purchases_purchased_at")
+  @@index([user_id], map: "idx_portfolio_purchases_user_id")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model portfolio_templates {
+  id                BigInt   @id @default(autoincrement())
+  template_name     String   @unique @db.VarChar(100)
+  description       String?
+  price             Decimal  @default(0) @db.Decimal(10, 2)
+  original_price    Decimal? @db.Decimal(10, 2)
+  preview_image_url String
+  thumbnail_images  Json?
+  canva_link        String?
+  download_link     String?
+  template_type     Json?
+  page_count        Int?     @default(16)
+  features          Json?
+  is_active         Boolean? @default(true)
+  is_featured       Boolean? @default(false)
+  display_order     Int?     @default(0)
+  tags              Json?
+  total_purchases   Int?     @default(0)
+  created_at        DateTime @default(dbgenerated("timezone('utc'::text, now())")) @db.Timestamptz(6)
+  updated_at        DateTime @default(dbgenerated("timezone('utc'::text, now())")) @db.Timestamptz(6)
+
+  @@index([is_active], map: "idx_portfolio_templates_active")
+  @@index([display_order], map: "idx_portfolio_templates_display_order")
+  @@index([is_featured], map: "idx_portfolio_templates_featured")
+  @@index([template_name], map: "idx_portfolio_templates_name")
+}
+
+model portfolio_uploads {
+  id             String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id        String    @db.Uuid
+  portfolio_name String    @db.VarChar(255)
+  template_type  String?   @db.VarChar(100)
+  file_url       String
+  file_key       String?
+  file_size      Int?
+  file_type      String?   @db.VarChar(50)
+  thumbnail_url  String?
+  status         String?   @default("completed") @db.VarChar(50)
+  metadata       Json?     @default("{}")
+  created_at     DateTime? @default(now()) @db.Timestamptz(6)
+  updated_at     DateTime? @default(now()) @db.Timestamptz(6)
+
+  @@index([user_id], map: "idx_portfolio_uploads_user_id")
+}
+
+model community_posts {
+  id                String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id           String              @db.Uuid
+  title             String              @db.VarChar(255)
+  description       String?
+  university_name   String?             @db.VarChar(255)
+  faculty_name      String?             @db.VarChar(255)
+  field_name        String?             @db.VarChar(255)
+  program_id        Int?
+  status            String?             @default("open") @db.VarChar(20)
+  watermark         String?             @default("watermark1") @db.VarChar(50)
+  original_file_url String?             @db.VarChar(1000)
+  cover_image_url   String?             @db.VarChar(1000)
+  created_at        DateTime?           @default(now()) @db.Timestamptz(6)
+  updated_at        DateTime?           @default(now()) @db.Timestamptz(6)
+  community_pages   community_pages[]
+  programs          programs?           @relation(fields: [program_id], references: [id], onUpdate: NoAction)
+  users             users               @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  community_ratings community_ratings[]
+
+  @@index([status], map: "idx_community_posts_status")
+  @@index([user_id], map: "idx_community_posts_user")
+  @@index([program_id], map: "idx_community_posts_program")
+}
+
+model community_pages {
+  id           String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  post_id      String          @db.Uuid
+  page_number  Int
+  image_url    String          @db.VarChar(1000)
+  storage_key  String?         @db.VarChar(500)
+  aspect_ratio Float?
+  is_visible   Boolean?        @default(true)
+  created_at   DateTime?       @default(now()) @db.Timestamptz(6)
+  posts        community_posts @relation(fields: [post_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([post_id, page_number])
+  @@index([post_id], map: "idx_community_pages_post")
+}
+
+model community_ratings {
+  id         String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  post_id    String          @db.Uuid
+  user_id    String          @db.Uuid
+  score      Int
+  created_at DateTime?       @default(now()) @db.Timestamptz(6)
+  updated_at DateTime?       @default(now()) @db.Timestamptz(6)
+  posts      community_posts @relation(fields: [post_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  users      users           @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([post_id, user_id])
+  @@index([post_id], map: "idx_community_ratings_post")
+  @@index([user_id], map: "idx_community_ratings_user")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model portfolios {
+  id                 String               @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id            String               @db.Uuid
+  file_name          String
+  file_url           String
+  file_size          Int?
+  file_type          String?
+  analysis_result    Json?
+  analysis_status    String?              @default("pending")
+  points_earned      Int?                 @default(0)
+  uploaded_at        DateTime?            @default(now()) @db.Timestamptz(6)
+  analyzed_at        DateTime?            @db.Timestamptz(6)
+  created_at         DateTime?            @default(now()) @db.Timestamptz(6)
+  portfolio_analysis portfolio_analysis[]
+  users              users                @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([user_id], map: "idx_portfolios_user_id")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model profile_views {
+  id                                         BigInt   @id @default(autoincrement())
+  profile_user_id                            String   @db.Uuid
+  viewer_user_id                             String?  @db.Uuid
+  ip_address                                 String?  @db.VarChar(45)
+  user_agent                                 String?
+  referer                                    String?
+  viewed_at                                  DateTime @default(dbgenerated("timezone('utc'::text, now())")) @db.Timestamptz(6)
+  users_profile_views_profile_user_idTousers users    @relation("profile_views_profile_user_idTousers", fields: [profile_user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  users_profile_views_viewer_user_idTousers  users?   @relation("profile_views_viewer_user_idTousers", fields: [viewer_user_id], references: [id], onUpdate: NoAction)
+
+  @@index([profile_user_id], map: "idx_profile_views_profile_user")
+  @@index([viewed_at(sort: Desc)], map: "idx_profile_views_viewed_at")
+}
+
+model universities {
+  id                 Int       @id @default(autoincrement())
+  university_id      String    @unique @db.VarChar(10)
+  university_type    String?   @db.VarChar(10)
+  university_type_id String?   @db.VarChar(10)
+  university_name_th String?
+  university_name_en String?
+  logo_url           String?   @db.VarChar(500)
+  is_accepted_round1 Boolean?  @default(false)
+  is_accepted_round2 Boolean?  @default(false)
+  is_accepted_round3 Boolean?  @default(false)
+  is_accepted_round4 Boolean?  @default(false)
+  file_path_1        String?
+  file_path_2        String?
+  file_path_3        String?
+  file_path_4        String?
+  academic_years     String[]  @default([])
+  created_at         DateTime? @default(now()) @db.Timestamp(6)
+  updated_at         DateTime? @default(now()) @db.Timestamp(6)
+
+  @@index([university_id], map: "idx_universities_university_id")
+  @@index([university_name_th], map: "idx_universities_name_th")
+}
+
+model programs {
+  id                          Int                        @id @default(autoincrement())
+  university_type_id          String?                    @db.VarChar(10)
+  university_type_name_th     String?
+  university_id               String?                    @db.VarChar(10)
+  university_name_th          String?
+  university_name_en          String?
+  campus_id                   String?                    @db.VarChar(10)
+  campus_name_th              String?
+  campus_name_en              String?
+  faculty_id                  String?                    @db.VarChar(10)
+  faculty_name_th             String?
+  faculty_name_en             String?
+  group_field_id              String?                    @db.VarChar(10)
+  group_field_th              String?
+  field_id                    String?                    @db.VarChar(10)
+  field_name_th               String?
+  field_name_en               String?
+  program_running_number      String?                    @db.VarChar(10)
+  program_name_th             String?
+  program_name_en             String?
+  program_type_id             String?                    @db.VarChar(10)
+  program_type_name_th        String?
+  program_id                  String?                    @unique @db.VarChar(50)
+  number_acceptance_mko2      Int?                       @default(0)
+  program_partners_id         String?                    @db.VarChar(50)
+  program_partners_inter_name String?
+  country_partners_name       String?
+  major_acceptance_number     Int?                       @default(0)
+  cost                        String?
+  graduate_rate               String?
+  employment_rate             String?
+  median_salary               String?
+  logo_url                    String?                    @db.VarChar(500)
+  created_at                  DateTime?                  @default(now()) @db.Timestamp(6)
+  updated_at                  DateTime?                  @default(now()) @db.Timestamp(6)
+  academic_years              String[]                   @default([])
+  community_posts             community_posts[]
+  user_interested_programs    user_interested_programs[]
+  tcas_score_weights          tcas_score_weights[]
+  tcas_cutoff_history         tcas_cutoff_history[]
+
+  @@index([faculty_id], map: "idx_programs_faculty_id")
+  @@index([faculty_name_th], map: "idx_programs_faculty_name")
+  @@index([university_id], map: "idx_programs_university_id")
+  @@index([university_name_th], map: "idx_programs_university_name")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model referral_tracking {
+  id                                              BigInt    @id @default(autoincrement())
+  referrer_user_id                                String    @db.Uuid
+  referred_user_id                                String?   @db.Uuid
+  ip_address                                      String?   @db.VarChar(45)
+  user_agent                                      String?
+  clicked_at                                      DateTime  @default(dbgenerated("timezone('utc'::text, now())")) @db.Timestamptz(6)
+  signed_up_at                                    DateTime? @db.Timestamptz(6)
+  referral_code                                   String    @db.VarChar(50)
+  points_awarded                                  Boolean?  @default(false)
+  points_amount                                   Int?      @default(0)
+  created_at                                      DateTime  @default(dbgenerated("timezone('utc'::text, now())")) @db.Timestamptz(6)
+  users_referral_tracking_referred_user_idTousers users?    @relation("referral_tracking_referred_user_idTousers", fields: [referred_user_id], references: [id], onUpdate: NoAction)
+  users_referral_tracking_referrer_user_idTousers users     @relation("referral_tracking_referrer_user_idTousers", fields: [referrer_user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([clicked_at(sort: Desc)], map: "idx_referral_tracking_clicked_at")
+  @@index([referral_code], map: "idx_referral_tracking_code")
+  @@index([referred_user_id], map: "idx_referral_tracking_referred")
+  @@index([referrer_user_id], map: "idx_referral_tracking_referrer")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model referrals {
+  id                                 String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  referrer_id                        String    @db.Uuid
+  referred_id                        String    @db.Uuid
+  referral_code                      String?
+  bonus_points                       Int?      @default(100)
+  is_claimed                         Boolean?  @default(false)
+  claimed_at                         DateTime? @db.Timestamptz(6)
+  created_at                         DateTime? @default(now()) @db.Timestamptz(6)
+  users_referrals_referred_idTousers users     @relation("referrals_referred_idTousers", fields: [referred_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  users_referrals_referrer_idTousers users     @relation("referrals_referrer_idTousers", fields: [referrer_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([referrer_id, referred_id])
+  @@index([referred_id], map: "idx_referrals_referred")
+  @@index([referrer_id], map: "idx_referrals_referrer")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model reward_redemptions {
+  id           String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id      String    @db.Uuid
+  reward_id    String    @db.Uuid
+  points_spent Int
+  status       String?   @default("completed")
+  expires_at   DateTime? @db.Timestamptz(6)
+  redeemed_at  DateTime? @default(now()) @db.Timestamptz(6)
+  created_at   DateTime? @default(now()) @db.Timestamptz(6)
+  rewards      rewards   @relation(fields: [reward_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users        users     @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([user_id], map: "idx_reward_redemptions_user_id")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model rewards {
+  id                 String               @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name               String
+  description        String?
+  points_required    Int
+  category           String
+  icon_name          String?
+  icon_url           String?
+  metadata           Json?
+  is_active          Boolean?             @default(true)
+  created_at         DateTime?            @default(now()) @db.Timestamptz(6)
+  updated_at         DateTime?            @default(now()) @db.Timestamptz(6)
+  reward_redemptions reward_redemptions[]
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model user_courses {
+  id            BigInt    @id @default(autoincrement())
+  user_id       String    @db.Uuid
+  course_name   String    @db.VarChar(500)
+  course_type   String?   @db.VarChar(50)
+  description   String?
+  image_url     String?
+  price         Decimal?  @default(0) @db.Decimal(10, 2)
+  provider      String?   @db.VarChar(255)
+  external_url  String?
+  enrolled_date DateTime? @default(dbgenerated("timezone('utc'::text, now())")) @db.Timestamptz(6)
+  completed     Boolean?  @default(false)
+  created_at    DateTime  @default(dbgenerated("timezone('utc'::text, now())")) @db.Timestamptz(6)
+  updated_at    DateTime  @default(dbgenerated("timezone('utc'::text, now())")) @db.Timestamptz(6)
+  users         users     @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([enrolled_date(sort: Desc)], map: "idx_user_courses_enrolled")
+  @@index([course_type], map: "idx_user_courses_type")
+  @@index([user_id], map: "idx_user_courses_user_id")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model user_faculty_access {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id     String    @db.Uuid
+  faculty_id  String    @db.Uuid
+  unlocked_at DateTime? @default(now()) @db.Timestamptz(6)
+  users       users     @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([user_id, faculty_id])
+  @@index([user_id], map: "idx_user_faculty_access_user_id")
+}
+
+model user_gpax_entries {
+  id            Int       @id @default(autoincrement())
+  user_id       String    @db.VarChar(255)
+  gpa           Decimal   @default(0) @db.Decimal(3, 2)
+  credits       Decimal   @default(0) @db.Decimal(5, 1)
+  academic_year String?   @db.VarChar(50)
+  created_at    DateTime? @default(now()) @db.Timestamp(6)
+}
+
+model user_interested_programs {
+  id         Int       @id @default(autoincrement())
+  user_id    String    @db.VarChar(255)
+  program_id Int
+  priority   Int?      @default(1)
+  created_at DateTime? @default(now()) @db.Timestamp(6)
+  programs   programs  @relation(fields: [program_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([user_id, program_id])
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model user_scores {
+  id         BigInt    @id @default(autoincrement())
+  user_id    String    @db.Uuid
+  subject    String    @db.VarChar(255)
+  score      Decimal   @db.Decimal(5, 2)
+  max_score  Decimal?  @default(100) @db.Decimal(5, 2)
+  exam_date  DateTime? @db.Date
+  created_at DateTime  @default(dbgenerated("timezone('utc'::text, now())")) @db.Timestamptz(6)
+  updated_at DateTime  @default(dbgenerated("timezone('utc'::text, now())")) @db.Timestamptz(6)
+  users      users     @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([created_at(sort: Desc)], map: "idx_user_scores_created_at")
+  @@index([user_id], map: "idx_user_scores_user_id")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model user_todos {
+  id           BigInt    @id @default(autoincrement())
+  user_id      String    @db.Uuid
+  title        String
+  description  String?
+  is_completed Boolean?  @default(false)
+  category     String?
+  order_index  Int?
+  completed_at DateTime? @db.Timestamptz(6)
+  created_at   DateTime? @default(now()) @db.Timestamptz(6)
+  updated_at   DateTime? @default(now()) @db.Timestamptz(6)
+  users        users     @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([user_id, is_completed], map: "idx_user_todos_completed")
+  @@index([user_id], map: "idx_user_todos_user_id")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model users {
+  id                                                          String                           @id @db.Uuid
+  email                                                       String?                          @unique
+  first_name                                                  String?
+  last_name                                                   String?
+  full_name                                                   String?
+  profile_image_url                                           String?
+  bio                                                         String?
+  total_points                                                Int?                             @default(0)
+  current_points                                              Int?                             @default(0)
+  referral_code                                               String?                          @unique
+  created_at                                                  DateTime?                        @default(now()) @db.Timestamptz(6)
+  updated_at                                                  DateTime?                        @default(now()) @db.Timestamptz(6)
+  deleted_at                                                  DateTime?                        @db.Timestamptz(6)
+  username                                                    String?                          @unique @db.VarChar(50)
+  is_public                                                   Boolean?                         @default(true)
+  gpax                                                        Decimal?                         @db.Decimal(3, 2)
+  role                                                        String?                          @default("member") @db.VarChar(50)
+  profile_completeness_percentage                             Int?                             @default(0)
+  banner_image_url                                            String?
+  community_posts                                             community_posts[]
+  community_ratings                                           community_ratings[]
+  mock_exam_attempts                                          mock_exam_attempts[]
+  mock_exam_results                                           mock_exam_results[]
+  point_activities                                            point_activities[]
+  point_history                                               point_history[]
+  portfolio_analysis                                          portfolio_analysis[]
+  portfolio_purchases                                         portfolio_purchases[]
+  portfolios                                                  portfolios[]
+  profile_views_profile_views_profile_user_idTousers          profile_views[]                  @relation("profile_views_profile_user_idTousers")
+  profile_views_profile_views_viewer_user_idTousers           profile_views[]                  @relation("profile_views_viewer_user_idTousers")
+  referral_tracking_referral_tracking_referred_user_idTousers referral_tracking[]              @relation("referral_tracking_referred_user_idTousers")
+  referral_tracking_referral_tracking_referrer_user_idTousers referral_tracking[]              @relation("referral_tracking_referrer_user_idTousers")
+  referrals_referrals_referred_idTousers                      referrals[]                      @relation("referrals_referred_idTousers")
+  referrals_referrals_referrer_idTousers                      referrals[]                      @relation("referrals_referrer_idTousers")
+  reward_redemptions                                          reward_redemptions[]
+  user_achievements                                           user_achievements[]
+  user_career_goals                                           user_career_goals[]
+  user_courses                                                user_courses[]
+  user_education_history                                      user_education_history[]
+  user_extracurricular                                        user_extracurricular[]
+  user_faculty_access                                         user_faculty_access[]
+  user_interests                                              user_interests[]
+  user_recommendation_preferences                             user_recommendation_preferences?
+  user_scores                                                 user_scores[]
+  user_skills                                                 user_skills[]
+  user_todos                                                  user_todos[]
+  user_viewed_activities                                      user_viewed_activities[]
+  user_viewed_courses                                         user_viewed_courses[]
+  user_calculator_history                                     user_calculator_history[]
+  blog_posts                                                  blog_posts[]
+}
+
+// ─── School System ───────────────────────────────────────────────────────────
+// Designed to support multiple schools in the future.
+// Current implementation: Assumption College Thonburi (ACT) only.
+
+model act_students {
+  id            Int      @id @default(autoincrement())
+  student_id    String   @unique @db.VarChar(20)
+  prefix        String?  @db.VarChar(10)
+  first_name    String   @db.VarChar(100)
+  last_name     String   @db.VarChar(100)
+  nickname      String?  @db.VarChar(50)
+  grade         String?  @db.VarChar(10)
+  classroom     String?  @db.VarChar(20)
+  study_plan    String?  @db.VarChar(100)
+  academic_year Int?     @default(2568)
+  email         String?  @db.VarChar(255)
+  created_at    DateTime @default(now()) @db.Timestamptz(6)
+  updated_at    DateTime @default(now()) @db.Timestamptz(6)
+
+  @@index([student_id], map: "idx_act_students_student_id")
+  @@index([grade, classroom], map: "idx_act_students_grade_classroom")
+  @@map("act_students")
+}
+
+model banners {
+  id            Int       @id @default(autoincrement())
+  title         String?   @db.VarChar(255)
+  image_url     String    @db.VarChar(1000)
+  link_url      String?   @db.VarChar(1000)
+  is_active     Boolean   @default(true)
+  display_order Int       @default(0)
+  start_date    DateTime? @db.Timestamptz(6)
+  end_date      DateTime? @db.Timestamptz(6)
+  created_at    DateTime  @default(now()) @db.Timestamptz(6)
+  updated_at    DateTime  @default(now()) @db.Timestamptz(6)
+
+  @@index([is_active], map: "idx_banners_is_active")
+  @@index([display_order], map: "idx_banners_display_order")
+  @@index([start_date], map: "idx_banners_start_date")
+  @@index([end_date], map: "idx_banners_end_date")
+}
+
+model mock_exam_results {
+  id              BigInt   @id @default(autoincrement())
+  user_id         String   @db.Uuid
+  exam_type       String   @db.VarChar(20)
+  scores          Json
+  overall_status  String   @db.VarChar(20)
+  analysis        Json
+  recommendations Json
+  created_at      DateTime @default(now()) @db.Timestamptz(6)
+  users           users    @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([user_id], map: "idx_mock_exam_results_user_id")
+  @@index([created_at(sort: Desc)], map: "idx_mock_exam_results_created_at")
+}
+
+model mock_exam_subjects {
+  id            Int      @id @default(autoincrement())
+  code          String   @unique @db.VarChar(20)
+  name          String   @db.VarChar(255)
+  exam_type     String?  @db.VarChar(20)
+  is_active     Boolean  @default(true)
+  display_order Int      @default(0)
+  created_at    DateTime @default(now()) @db.Timestamptz(6)
+
+  @@index([exam_type], map: "idx_mock_exam_subjects_exam_type")
+  @@index([is_active], map: "idx_mock_exam_subjects_is_active")
+}
+
+model mock_exam_faculty_criteria {
+  id            Int      @id @default(autoincrement())
+  faculty       String   @db.VarChar(255)
+  university    String   @db.VarChar(255)
+  requirements  Json
+  is_active     Boolean  @default(true)
+  display_order Int      @default(0)
+  created_at    DateTime @default(now()) @db.Timestamptz(6)
+
+  @@index([is_active], map: "idx_mock_exam_criteria_is_active")
+  @@index([university], map: "idx_mock_exam_criteria_university")
+}
+
+model mock_exams {
+  id               Int                  @id @default(autoincrement())
+  title            String               @db.VarChar(255)
+  description      String?
+  detail_content   String?
+  subject_code     String               @db.VarChar(20)
+  exam_type        String               @db.VarChar(20)
+  duration_minutes Int                  @default(60)
+  total_score      Int                  @default(100)
+  pass_score       Int                  @default(50)
+  is_active        Boolean              @default(true)
+  display_order    Int                  @default(0)
+  created_at       DateTime             @default(now()) @db.Timestamptz(6)
+  updated_at       DateTime             @default(now()) @db.Timestamptz(6)
+  attempts         mock_exam_attempts[]
+  sections         mock_exam_sections[]
+
+  @@index([subject_code], map: "idx_mock_exams_subject_code")
+  @@index([is_active], map: "idx_mock_exams_is_active")
+}
+
+model mock_exam_pdfs {
+  id            Int      @id @default(autoincrement())
+  title         String   @db.VarChar(255)
+  filename      String   @db.VarChar(255)
+  r2_url        String
+  subject_code  String?  @db.VarChar(20)
+  exam_type     String?  @db.VarChar(20)
+  is_active     Boolean  @default(true)
+  display_order Int      @default(0)
+  created_at    DateTime @default(now()) @db.Timestamptz(6)
+  updated_at    DateTime @default(now()) @db.Timestamptz(6)
+
+  @@index([is_active], map: "idx_mock_exam_pdfs_is_active")
+}
+
+model mock_exam_sections {
+  id            Int                   @id @default(autoincrement())
+  exam_id       Int
+  title         String                @db.VarChar(255)
+  description   String?
+  section_order Int                   @default(0)
+  score_weight  Int                   @default(50)
+  created_at    DateTime              @default(now()) @db.Timestamptz(6)
+  passages      mock_exam_passages[]
+  questions     mock_exam_questions[]
+  exam          mock_exams            @relation(fields: [exam_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([exam_id], map: "idx_mock_exam_sections_exam_id")
+}
+
+model mock_exam_passages {
+  id            Int                   @id @default(autoincrement())
+  section_id    Int
+  title         String?               @db.VarChar(255)
+  content       String
+  passage_type  String                @default("text") @db.VarChar(50)
+  passage_order Int                   @default(0)
+  created_at    DateTime              @default(now()) @db.Timestamptz(6)
+  section       mock_exam_sections    @relation(fields: [section_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  questions     mock_exam_questions[]
+
+  @@index([section_id], map: "idx_mock_exam_passages_section_id")
+}
+
+model mock_exam_questions {
+  id             Int                         @id @default(autoincrement())
+  section_id     Int
+  passage_id     Int?
+  question_text  String
+  question_type  String                      @default("multiple_choice") @db.VarChar(50)
+  choices        Json
+  correct_answer String                      @db.VarChar(10)
+  explanation    String?
+  question_order Int                         @default(0)
+  score          Int                         @default(1)
+  created_at     DateTime                    @default(now()) @db.Timestamptz(6)
+  answers        mock_exam_attempt_answers[]
+  passage        mock_exam_passages?         @relation(fields: [passage_id], references: [id], onUpdate: NoAction)
+  section        mock_exam_sections          @relation(fields: [section_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([section_id], map: "idx_mock_exam_questions_section_id")
+  @@index([passage_id], map: "idx_mock_exam_questions_passage_id")
+}
+
+model mock_exam_attempts {
+  id              Int                         @id @default(autoincrement())
+  user_id         String                      @db.Uuid
+  exam_id         Int
+  status          String                      @default("in_progress") @db.VarChar(20)
+  score           Int?                        @default(0)
+  total_questions Int?                        @default(0)
+  correct_count   Int?                        @default(0)
+  time_spent_sec  Int?                        @default(0)
+  ai_analysis     String?
+  started_at      DateTime                    @default(now()) @db.Timestamptz(6)
+  completed_at    DateTime?                   @db.Timestamptz(6)
+  created_at      DateTime                    @default(now()) @db.Timestamptz(6)
+  answers         mock_exam_attempt_answers[]
+  exam            mock_exams                  @relation(fields: [exam_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  users           users                       @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([user_id], map: "idx_mock_exam_attempts_user_id")
+  @@index([exam_id], map: "idx_mock_exam_attempts_exam_id")
+  @@index([status], map: "idx_mock_exam_attempts_status")
+}
+
+model mock_exam_attempt_answers {
+  id              Int                 @id @default(autoincrement())
+  attempt_id      Int
+  question_id     Int
+  selected_answer String?             @db.VarChar(10)
+  is_correct      Boolean?            @default(false)
+  created_at      DateTime            @default(now()) @db.Timestamptz(6)
+  attempt         mock_exam_attempts  @relation(fields: [attempt_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  question        mock_exam_questions @relation(fields: [question_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([attempt_id, question_id])
+  @@index([attempt_id], map: "idx_mock_exam_answers_attempt_id")
+  @@index([question_id], map: "idx_mock_exam_answers_question_id")
+}
+
+/// User Education History - tracks schools and education background
+model user_education_history {
+  id              BigInt   @id @default(autoincrement())
+  user_id         String   @db.Uuid
+  school_name     String   @db.VarChar(500)
+  school_type     String?  @db.VarChar(50)
+  start_year      Int?
+  end_year        Int?
+  is_current      Boolean? @default(false)
+  location        String?  @db.VarChar(255)
+  school_logo_url String?
+  major           String?  @db.VarChar(255)
+  honors_awards   Json?
+  created_at      DateTime @default(now()) @db.Timestamptz(6)
+  updated_at      DateTime @default(now()) @db.Timestamptz(6)
+  data_source     String?  @default("user_entered") @db.VarChar(50)
+  users           users    @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([user_id], map: "idx_user_education_user_id")
+  @@index([school_type], map: "idx_user_education_school_type")
+}
+
+/// User Achievements - academic, competition, awards, certifications
+model user_achievements {
+  id                BigInt    @id @default(autoincrement())
+  user_id           String    @db.Uuid
+  achievement_type  String    @db.VarChar(100)
+  title             String    @db.VarChar(500)
+  description       String?
+  organization      String?   @db.VarChar(255)
+  date_achieved     DateTime? @db.Date
+  achievement_level String?   @db.VarChar(50)
+  certificate_url   String?
+  evidence_urls     Json?
+  skills_gained     Json?
+  created_at        DateTime  @default(now()) @db.Timestamptz(6)
+  updated_at        DateTime  @default(now()) @db.Timestamptz(6)
+  data_source       String?   @default("user_entered") @db.VarChar(50)
+  users             users     @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([user_id], map: "idx_user_achievements_user_id")
+  @@index([achievement_type], map: "idx_user_achievements_type")
+  @@index([achievement_level], map: "idx_user_achievements_level")
+}
+
+/// User Extracurricular Activities - clubs, volunteer work, leadership roles
+model user_extracurricular {
+  id                 BigInt    @id @default(autoincrement())
+  user_id            String    @db.Uuid
+  activity_name      String    @db.VarChar(500)
+  activity_type      String?   @db.VarChar(100)
+  role               String?   @db.VarChar(100)
+  organization       String?   @db.VarChar(255)
+  start_date         DateTime? @db.Date
+  end_date           DateTime? @db.Date
+  is_ongoing         Boolean?  @default(false)
+  hours_committed    Int?
+  description        String?
+  impact_description String?
+  achievements       Json?
+  created_at         DateTime  @default(now()) @db.Timestamptz(6)
+  updated_at         DateTime  @default(now()) @db.Timestamptz(6)
+  data_source        String?   @default("user_entered") @db.VarChar(50)
+  users              users     @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([user_id], map: "idx_user_extracurricular_user_id")
+  @@index([activity_type], map: "idx_user_extracurricular_type")
+  @@index([is_ongoing], map: "idx_user_extracurricular_ongoing")
+}
+
+/// User Skills - technical, soft skills, languages, tools
+model user_skills {
+  id                  BigInt   @id @default(autoincrement())
+  user_id             String   @db.Uuid
+  skill_name          String   @db.VarChar(255)
+  skill_category      String?  @db.VarChar(100)
+  proficiency_level   String?  @db.VarChar(50)
+  verified_by         String?  @db.VarChar(50)
+  evidence_url        String?
+  years_of_experience Int?
+  created_at          DateTime @default(now()) @db.Timestamptz(6)
+  updated_at          DateTime @default(now()) @db.Timestamptz(6)
+  data_source         String?  @default("user_entered") @db.VarChar(50)
+  users               users    @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([user_id], map: "idx_user_skills_user_id")
+  @@index([skill_category], map: "idx_user_skills_category")
+  @@index([proficiency_level], map: "idx_user_skills_proficiency")
+}
+
+/// User Interests - subjects, career fields, hobbies
+model user_interests {
+  id                BigInt   @id @default(autoincrement())
+  user_id           String   @db.Uuid
+  interest_category String   @db.VarChar(100)
+  interest_name     String   @db.VarChar(255)
+  intensity_level   Int?     @default(5)
+  since_when        String?  @db.VarChar(50)
+  description       String?
+  created_at        DateTime @default(now()) @db.Timestamptz(6)
+  updated_at        DateTime @default(now()) @db.Timestamptz(6)
+  data_source       String?  @default("user_entered") @db.VarChar(50)
+  users             users    @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([user_id], map: "idx_user_interests_user_id")
+  @@index([interest_category], map: "idx_user_interests_category")
+}
+
+/// User Career Goals - aspirations and target universities/programs
+model user_career_goals {
+  id                  BigInt   @id @default(autoincrement())
+  user_id             String   @db.Uuid
+  primary_goal        String   @db.VarChar(500)
+  backup_goals        Json?
+  target_universities Json?
+  target_programs     Json?
+  target_industry     String?  @db.VarChar(255)
+  timeline            String?  @db.VarChar(100)
+  motivation          String?
+  steps_taken         Json?
+  created_at          DateTime @default(now()) @db.Timestamptz(6)
+  updated_at          DateTime @default(now()) @db.Timestamptz(6)
+  data_source         String?  @default("user_entered") @db.VarChar(50)
+  users               users    @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([user_id], map: "idx_user_career_goals_user_id")
+}
+
+model api_keys {
+  id           Int         @id @default(autoincrement())
+  key_hash     String      @unique @db.VarChar(64)
+  name         String      @db.VarChar(100)
+  owner_email  String      @db.VarChar(255)
+  is_active    Boolean     @default(true)
+  rate_limit   Int         @default(60)
+  scopes       String[]    @default(["read:exams"])
+  last_used_at DateTime?   @db.Timestamptz(6)
+  created_at   DateTime    @default(now()) @db.Timestamptz(6)
+  expires_at   DateTime?   @db.Timestamptz(6)
+  api_usage    api_usage[]
+
+  @@index([key_hash])
+  @@index([is_active])
+}
+
+model api_usage {
+  id         BigInt   @id @default(autoincrement())
+  api_key_id Int
+  endpoint   String   @db.VarChar(200)
+  method     String   @db.VarChar(10)
+  status     Int
+  ip         String?  @db.VarChar(45)
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  api_keys   api_keys @relation(fields: [api_key_id], references: [id], onDelete: Cascade)
+
+  @@index([api_key_id, created_at(sort: Desc)])
+  @@index([created_at(sort: Desc)])
+}
+
+/// Tags for activities - allows for flexible categorization and matching
+model activity_tags {
+  id          BigInt     @id @default(autoincrement())
+  activity_id Int
+  tag_name    String     @db.VarChar(100)
+  tag_type    String     @db.VarChar(50)
+  weight      Int?       @default(1)
+  created_at  DateTime   @default(now()) @db.Timestamptz(6)
+  activities  activities @relation(fields: [activity_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([activity_id], map: "idx_activity_tags_activity_id")
+  @@index([tag_name], map: "idx_activity_tags_tag_name")
+  @@index([tag_type], map: "idx_activity_tags_tag_type")
+}
+
+/// Tags for courses - same structure as activity tags
+model course_tags {
+  id         BigInt   @id @default(autoincrement())
+  course_id  Int
+  tag_name   String   @db.VarChar(100)
+  tag_type   String   @db.VarChar(50)
+  weight     Int?     @default(1)
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  courses    courses  @relation(fields: [course_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([course_id], map: "idx_course_tags_course_id")
+  @@index([tag_name], map: "idx_course_tags_tag_name")
+  @@index([tag_type], map: "idx_course_tags_tag_type")
+}
+
+/// Track what activities users have viewed for better recommendations
+model user_viewed_activities {
+  id          BigInt     @id @default(autoincrement())
+  user_id     String     @db.Uuid
+  activity_id Int
+  viewed_at   DateTime   @default(now()) @db.Timestamptz(6)
+  activities  activities @relation(fields: [activity_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  users       users      @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([user_id, activity_id], map: "unique_user_activity_view")
+  @@index([user_id], map: "idx_user_viewed_activities_user_id")
+  @@index([activity_id], map: "idx_user_viewed_activities_activity_id")
+  @@index([viewed_at], map: "idx_user_viewed_activities_viewed_at")
+}
+
+/// Track what courses users have viewed
+model user_viewed_courses {
+  id        BigInt   @id @default(autoincrement())
+  user_id   String   @db.Uuid
+  course_id Int
+  viewed_at DateTime @default(now()) @db.Timestamptz(6)
+  courses   courses  @relation(fields: [course_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  users     users    @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([user_id, course_id], map: "unique_user_course_view")
+  @@index([user_id], map: "idx_user_viewed_courses_user_id")
+  @@index([course_id], map: "idx_user_viewed_courses_course_id")
+  @@index([viewed_at], map: "idx_user_viewed_courses_viewed_at")
+}
+
+/// User recommendation preferences - allows users to tune their recommendations
+model user_recommendation_preferences {
+  id                        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id                   String    @unique @db.Uuid
+  prefer_online             Boolean?  @default(false)
+  prefer_onsite             Boolean?  @default(true)
+  prefer_free               Boolean?  @default(false)
+  max_price                 Decimal?  @db.Decimal(10, 2)
+  preferred_difficulty      String?   @db.VarChar(50)
+  exclude_categories        Json?
+  boost_categories          Json?
+  notification_frequency    String?   @default("weekly") @db.VarChar(50)
+  last_recommendation_shown DateTime? @db.Timestamptz(6)
+  created_at                DateTime  @default(now()) @db.Timestamptz(6)
+  updated_at                DateTime  @default(now()) @db.Timestamptz(6)
+  users                     users     @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([user_id], map: "idx_user_recommendation_prefs_user_id")
+}
+
+model schools {
+  school_id   String   @id @db.VarChar(20)
+  school_name String
+  province    String?
+  district    String?
+  school_type String?
+  created_at  DateTime @default(now()) @db.Timestamptz(6)
+  updated_at  DateTime @default(now()) @db.Timestamptz(6)
+
+  @@index([school_name], map: "idx_schools_name")
+  @@index([province], map: "idx_schools_province")
+}
+
+// ─── TCAS Calculator ────────────────────────────────────────────────────────
+// Models for TCAS admission score calculator feature
+
+/// Score weights for each program's admission criteria
+model tcas_score_weights {
+  id           Int      @id @default(autoincrement())
+  program_id   Int
+  subject_code String   @db.VarChar(20) // e.g., "TGAT1", "A_MATH1", "TPAT3"
+  weight       Decimal  @db.Decimal(5, 4) // e.g., 0.3000 for 30%
+  min_score    Decimal? @db.Decimal(5, 2) // minimum required score
+  created_at   DateTime @default(now()) @db.Timestamptz(6)
+  programs     programs @relation(fields: [program_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([program_id, subject_code])
+  @@index([program_id], map: "idx_tcas_score_weights_program_id")
+  @@index([subject_code], map: "idx_tcas_score_weights_subject_code")
+}
+
+/// Historical cutoff scores for each program by year and round
+model tcas_cutoff_history {
+  id         Int      @id @default(autoincrement())
+  program_id Int
+  year       Int // e.g., 2568, 2567
+  round      Int // 1-4 (TCAS rounds)
+  min_score  Decimal  @db.Decimal(7, 2) // minimum score accepted
+  max_score  Decimal? @db.Decimal(7, 2) // highest score
+  avg_score  Decimal? @db.Decimal(7, 2) // average score
+  seats      Int? // number of seats available
+  applicants Int? // number of applicants
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  programs   programs @relation(fields: [program_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([program_id, year, round])
+  @@index([program_id], map: "idx_tcas_cutoff_history_program_id")
+  @@index([year], map: "idx_tcas_cutoff_history_year")
+  @@index([round], map: "idx_tcas_cutoff_history_round")
+}
+
+/// User's calculator history and saved calculations
+model user_calculator_history {
+  id           Int      @id @default(autoincrement())
+  user_id      String   @db.Uuid
+  scores       Json // User's input scores { TGAT1: 80, TGAT2: 75, ... }
+  results      Json // Calculation results
+  program_type Int // 1-4 (calculation program type)
+  created_at   DateTime @default(now()) @db.Timestamptz(6)
+  users        users    @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([user_id], map: "idx_user_calculator_history_user_id")
+  @@index([created_at(sort: Desc)], map: "idx_user_calculator_history_created_at")
+}
+
+// ─── Blog System ────────────────────────────────────────────────────────────
+// Multi-language blog with categories and tags
+
+model blog_posts {
+  id             Int       @id @default(autoincrement())
+  slug           String    @unique @db.VarChar(255)
+  author_id      String    @db.Uuid
+  status         String    @default("draft") @db.VarChar(20) // draft, published, archived
+  featured_image String?
+  view_count     Int?      @default(0)
+  is_featured    Boolean?  @default(false)
+  published_at   DateTime? @db.Timestamptz(6)
+  created_at     DateTime  @default(now()) @db.Timestamptz(6)
+  updated_at     DateTime  @default(now()) @db.Timestamptz(6)
+
+  author       users                    @relation(fields: [author_id], references: [id], onDelete: Cascade)
+  translations blog_post_translations[]
+  categories   blog_post_categories[]
+  tags         blog_post_tags[]
+
+  @@index([status], map: "idx_blog_posts_status")
+  @@index([published_at(sort: Desc)], map: "idx_blog_posts_published_at")
+  @@index([slug], map: "idx_blog_posts_slug")
+}
+
+model blog_post_translations {
+  id               Int     @id @default(autoincrement())
+  post_id          Int
+  locale           String  @db.VarChar(5) // th, en
+  title            String  @db.VarChar(500)
+  excerpt          String? @db.VarChar(1000)
+  content          String // Markdown/HTML
+  meta_title       String? @db.VarChar(100)
+  meta_description String? @db.VarChar(300)
+
+  post blog_posts @relation(fields: [post_id], references: [id], onDelete: Cascade)
+
+  @@unique([post_id, locale])
+}
+
+model blog_categories {
+  id            Int      @id @default(autoincrement())
+  slug          String   @unique @db.VarChar(100)
+  icon          String?  @default("Folder") @db.VarChar(50)
+  color         String?  @db.VarChar(20)
+  display_order Int?     @default(0)
+  is_active     Boolean? @default(true)
+  created_at    DateTime @default(now()) @db.Timestamptz(6)
+
+  translations blog_category_translations[]
+  posts        blog_post_categories[]
+}
+
+model blog_category_translations {
+  id          Int     @id @default(autoincrement())
+  category_id Int
+  locale      String  @db.VarChar(5)
+  name        String  @db.VarChar(100)
+  description String? @db.VarChar(500)
+
+  category blog_categories @relation(fields: [category_id], references: [id], onDelete: Cascade)
+
+  @@unique([category_id, locale])
+}
+
+model blog_tags {
+  id         Int      @id @default(autoincrement())
+  slug       String   @unique @db.VarChar(100)
+  is_active  Boolean? @default(true)
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+
+  translations blog_tag_translations[]
+  posts        blog_post_tags[]
+}
+
+model blog_tag_translations {
+  id     Int    @id @default(autoincrement())
+  tag_id Int
+  locale String @db.VarChar(5)
+  name   String @db.VarChar(100)
+
+  tag blog_tags @relation(fields: [tag_id], references: [id], onDelete: Cascade)
+
+  @@unique([tag_id, locale])
+}
+
+model blog_post_categories {
+  id          Int @id @default(autoincrement())
+  post_id     Int
+  category_id Int
+
+  post     blog_posts      @relation(fields: [post_id], references: [id], onDelete: Cascade)
+  category blog_categories @relation(fields: [category_id], references: [id], onDelete: Cascade)
+
+  @@unique([post_id, category_id])
+}
+
+model blog_post_tags {
+  id      Int @id @default(autoincrement())
+  post_id Int
+  tag_id  Int
+
+  post blog_posts @relation(fields: [post_id], references: [id], onDelete: Cascade)
+  tag  blog_tags  @relation(fields: [tag_id], references: [id], onDelete: Cascade)
+
+  @@unique([post_id, tag_id])
+}

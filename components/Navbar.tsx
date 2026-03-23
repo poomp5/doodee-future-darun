@@ -1,5 +1,5 @@
 'use client'
-import { GraduationCap, User, Home, BarChart3, Target, Users, ChevronDown, Coins, Sparkles, Settings, LogOut } from 'lucide-react';
+import { GraduationCap, User, Home, BarChart3, Target, Users, ChevronDown, Coins, Sparkles, Settings, LogOut, Map } from 'lucide-react';
 import { Link, usePathname } from '@/routing';
 import { useAuth } from './AuthProvider';
 import Image from 'next/image';
@@ -36,6 +36,7 @@ const Navbar = () => {
     { href: "/", label: t("home"), icon: Home },
     { href: "/analyse", label: t("analyze"), icon: BarChart3 },
     { href: "/course", label: t("plan"), icon: Target },
+    { href: "/pathfinding", label: t("pathfinding"), icon: Map },
     // { href: "/calculator", label: t("calculator"), icon: Calculator },
     { href: "/community", label: t("community"), icon: Users },
   ];

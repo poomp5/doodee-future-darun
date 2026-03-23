@@ -32,7 +32,8 @@
     "logout": "ออกจากระบบ",
     "signIn": "เข้าสู่ระบบ",
     "mockExam": "การทดสอบ",
-    "more": "เพิ่มเติม"
+    "more": "เพิ่มเติม",
+    "pathfinding": "ค้นเส้นทาง"
   },
   "home": {
     "tcasCountdown": "เตรียมพบกับรอบพอร์ต TCAS 1 ปีการศึกษา 2570",
@@ -67,6 +68,7 @@
     "menuMockExamCta": "เริ่มทำข้อสอบ",
     "menuMockExamShort": "ข้อสอบ",
     "menuCommunity": "ชุมชน",
+    "menuPathfinding": "ค้นเส้นทาง",
     "noAnnouncements": "ยังไม่มีประกาศ",
     "dreamTitle": "คณะในฝัน / ปฏิทินของฉัน",
     "dreamSubtitleWithCount": "คณะที่คุณสนใจ ({count} คณะ)",
@@ -893,5 +895,11 @@
         }
       }
     }
+  },
+  "pathfinding": {
+    "navLabel": "ค้นเส้นทาง",
+    "pageTitle": "ระบบค้นเส้นทาง TCAS",
+    "pageSubtitle": "วิเคราะห์โปรไฟล์ของคุณด้วย AI เพื่อแนะนำรอบสมัครที่เหมาะสมที่สุด",
+    "breadcrumb": "ค้นเส้นทาง TCAS"
   }
 }

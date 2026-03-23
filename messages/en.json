@@ -32,7 +32,8 @@
     "logout": "Logout",
     "signIn": "Sign In",
     "mockExam": "Mock Exam",
-    "more": "More"
+    "more": "More",
+    "pathfinding": "Path Finder"
   },
   "home": {
     "tcasCountdown": "Get Ready for TCAS Portfolio Round 1 - Academic Year 2027",
@@ -67,6 +68,7 @@
     "menuMockExamCta": "Start Exam",
     "menuMockExamShort": "Mock Exam",
     "menuCommunity": "Community",
+    "menuPathfinding": "Path Finder",
     "noAnnouncements": "No announcements yet",
     "dreamTitle": "Dream Faculty / My Calendar",
     "dreamSubtitleWithCount": "Faculties you follow ({count})",
@@ -893,5 +895,11 @@
         }
       }
     }
+  },
+  "pathfinding": {
+    "navLabel": "Path Finder",
+    "pageTitle": "TCAS Path Finder",
+    "pageSubtitle": "AI-powered analysis to suggest the best TCAS round for you",
+    "breadcrumb": "TCAS Path Finder"
   }
 }

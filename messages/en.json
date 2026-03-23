@@ -32,13 +32,9 @@
     "logout": "Logout",
     "signIn": "Sign In",
     "mockExam": "Mock Exam",
-<<<<<<< HEAD
+    "talentPipeline": "Opportunities",
     "more": "More",
     "pathfinding": "Path Finder"
-=======
-    "talentPipeline": "Opportunities",
-    "more": "More"
->>>>>>> 506f4b05615b8aa80664fdb3c30d3634585b1aad
   },
   "home": {
     "tcasCountdown": "Get Ready for TCAS Portfolio Round 1 - Academic Year 2027",

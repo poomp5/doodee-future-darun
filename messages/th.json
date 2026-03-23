@@ -32,13 +32,9 @@
     "logout": "ออกจากระบบ",
     "signIn": "เข้าสู่ระบบ",
     "mockExam": "การทดสอบ",
-<<<<<<< HEAD
+    "talentPipeline": "จับคู่โอกาส",
     "more": "เพิ่มเติม",
     "pathfinding": "ค้นเส้นทาง"
-=======
-    "talentPipeline": "จับคู่โอกาส",
-    "more": "เพิ่มเติม"
->>>>>>> 506f4b05615b8aa80664fdb3c30d3634585b1aad
   },
   "home": {
     "tcasCountdown": "เตรียมพบกับรอบพอร์ต TCAS 1 ปีการศึกษา 2570",

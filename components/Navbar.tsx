@@ -1,9 +1,5 @@
 'use client'
-<<<<<<< HEAD
-import { GraduationCap, User, Home, BarChart3, Target, Users, ChevronDown, Coins, Sparkles, Settings, LogOut, Map } from 'lucide-react';
-=======
-import { GraduationCap, User, Home, BarChart3, Target, Users, ChevronDown, Coins, Sparkles, Settings, LogOut, Zap } from 'lucide-react';
->>>>>>> 506f4b05615b8aa80664fdb3c30d3634585b1aad
+import { GraduationCap, User, Home, BarChart3, Target, Users, ChevronDown, Coins, Sparkles, Settings, LogOut, Map, Zap } from 'lucide-react';
 import { Link, usePathname } from '@/routing';
 import { useAuth } from './AuthProvider';
 import Image from 'next/image';

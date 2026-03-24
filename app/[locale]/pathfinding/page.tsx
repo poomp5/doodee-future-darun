@@ -165,7 +165,7 @@ export default function PathfindingPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-white to-purple-50 pb-24">
+    <div className="min-h-screen bg-gray-50 pb-24">
       <div className="max-w-3xl mx-auto px-4 py-8">
         <Breadcrumbs
           items={[
@@ -268,7 +268,7 @@ export default function PathfindingPage() {
             <button
               onClick={handleAnalyze}
               disabled={!targetField || analyzing || !profile?.hasEnoughData}
-              className="w-full py-4 bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-700 hover:to-purple-700 disabled:from-gray-200 disabled:to-gray-200 disabled:text-gray-400 text-white rounded-2xl font-bold text-base transition-all shadow-lg flex items-center justify-center gap-2"
+              className="w-full py-4 bg-pink-600 hover:bg-pink-700 disabled:bg-gray-200 disabled:text-gray-400 text-white rounded-2xl font-bold text-base transition-all shadow-lg flex items-center justify-center gap-2"
             >
               {analyzing ? (
                 <>
@@ -432,7 +432,7 @@ function ResultView({
   return (
     <div className="space-y-6">
       {/* Personal message card */}
-      <div className="bg-gradient-to-r from-pink-600 to-purple-600 rounded-2xl p-6 text-white shadow-lg">
+      <div className="bg-pink-600 rounded-2xl p-6 text-white shadow-lg">
         <div className="flex items-center gap-2 mb-3">
           <Sparkles className="w-5 h-5" />
           <span className="font-semibold text-sm">ผลการวิเคราะห์จาก AI</span>

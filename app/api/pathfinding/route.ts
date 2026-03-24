@@ -150,7 +150,6 @@ async function fetchProfileSummary(userId: string): Promise<ProfileSummary> {
   // Missing data hints
   const missingItems: string[] = [];
   if (gpax === null) missingItems.push("GPAX (กรอกในหน้า GPAX)");
-  if (Object.keys(scores).length === 0) missingItems.push("คะแนนสอบ TGAT/TPAT/A-Level");
   if (!careerGoalField) missingItems.push("เป้าหมายคณะ/สาขา");
 
   const hasEnoughData = gpax !== null;

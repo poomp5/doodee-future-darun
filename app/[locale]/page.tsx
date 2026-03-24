@@ -5,7 +5,7 @@ import Image from "next/image";
 import { Link } from "@/routing";
 import { useTranslations, useLocale } from "next-intl";
 import { examCountdowns, ExamCountdown } from "@/lib/exam-config";
-import { Brain, Users, FileText, GraduationCap, ArrowRight, Settings, ChevronRight, ChevronLeft, Map } from "lucide-react";
+import { Brain, Users, FileText, GraduationCap, ArrowRight, Settings, ChevronRight, ChevronLeft, Map, Sparkles } from "lucide-react";
 import { useAuth } from "@/components/AuthProvider";
 import ForYouWidget from "@/components/recommendations/ForYouWidget";
 import ACTBanner from "@/components/schools/ACTBanner";
@@ -354,22 +354,23 @@ export default function HomePage() {
       </Link>
 
       {/* Quick CTA menu */}
-      <div className="w-full grid grid-cols-4 gap-3">
+      <div className="w-full grid grid-cols-5 gap-2">
         {[
           { label: t("menuAnalyse"), href: "/analyse", icon: Brain, iconColor: "text-pink-600", iconBg: "bg-pink-50", hoverBg: "hover:bg-pink-50", border: "border-pink-100" },
           { label: t("menuPathfinding"), href: "/pathfinding", icon: Map, iconColor: "text-rose-600", iconBg: "bg-rose-50", hoverBg: "hover:bg-rose-50", border: "border-rose-100" },
           { label: t("menuMockExamShort"), href: "/mock-exam", icon: FileText, iconColor: "text-indigo-600", iconBg: "bg-indigo-50", hoverBg: "hover:bg-indigo-50", border: "border-indigo-100" },
+          { label: t("menuTalentPipeline"), href: "/talent-pipeline", icon: Sparkles, iconColor: "text-purple-600", iconBg: "bg-purple-50", hoverBg: "hover:bg-purple-50", border: "border-purple-100" },
           { label: t("menuCommunity"), href: "/community", icon: Users, iconColor: "text-teal-600", iconBg: "bg-teal-50", hoverBg: "hover:bg-teal-50", border: "border-teal-100" },
         ].map((cta) => (
           <Link
             key={cta.href}
             href={cta.href}
-            className={`group w-full aspect-square bg-white border ${cta.border} rounded-2xl flex flex-col items-center justify-center gap-2.5 ${cta.hoverBg} hover:shadow-sm hover:-translate-y-0.5 transition-all duration-200`}
+            className={`group bg-white border ${cta.border} rounded-xl flex flex-col items-center justify-center gap-2 py-3 px-1 ${cta.hoverBg} hover:shadow-sm transition-all duration-200`}
           >
-            <div className={`w-11 h-11 rounded-xl ${cta.iconBg} flex items-center justify-center`}>
-              <cta.icon className={`w-5 h-5 ${cta.iconColor}`} />
+            <div className={`w-9 h-9 rounded-lg ${cta.iconBg} flex items-center justify-center`}>
+              <cta.icon className={`w-4 h-4 ${cta.iconColor}`} />
             </div>
-            <span className={`px-2 text-center leading-tight text-xs font-semibold ${cta.iconColor}`}>{cta.label}</span>
+            <span className={`text-center leading-tight text-[11px] font-semibold ${cta.iconColor}`}>{cta.label}</span>
           </Link>
         ))}
       </div>

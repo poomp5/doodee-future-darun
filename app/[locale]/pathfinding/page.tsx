@@ -1,8 +1,8 @@
 ﻿"use client";
 
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useAuth } from "@/components/AuthProvider";
-import { useRouter, Link } from "@/routing";
+import { Link } from "@/routing";
 import {
   Map,
   Sparkles,
@@ -25,6 +25,8 @@ import {
   Circle,
   RefreshCw,
   ExternalLink,
+  ThumbsUp,
+  Minus,
 } from "lucide-react";
 import toast from "react-hot-toast";
 import Breadcrumbs from "@/components/Breadcrumbs";
@@ -65,11 +67,11 @@ const SUITABILITY_LABEL: Record<string, { label: string; color: string }> = {
   low: { label: "เหมาะสมน้อย", color: "text-red-500" },
 };
 
-const PORTFOLIO_LABEL: Record<PortfolioQuality, { label: string; color: string; emoji: string }> = {
-  excellent: { label: "ดีเยี่ยม", color: "text-green-600", emoji: "🏆" },
-  good: { label: "ดี", color: "text-blue-600", emoji: "👍" },
-  basic: { label: "พื้นฐาน", color: "text-yellow-600", emoji: "📄" },
-  none: { label: "ยังไม่มี", color: "text-gray-400", emoji: "-" },
+const PORTFOLIO_LABEL: Record<PortfolioQuality, { label: string; color: string; icon: React.ElementType }> = {
+  excellent: { label: "ดีเยี่ยม", color: "text-green-600", icon: Trophy },
+  good: { label: "ดี", color: "text-blue-600", icon: ThumbsUp },
+  basic: { label: "พื้นฐาน", color: "text-yellow-600", icon: FileText },
+  none: { label: "ยังไม่มี", color: "text-gray-400", icon: Minus },
 };
 
 const FIELDS = [
@@ -95,7 +97,6 @@ const FIELDS = [
 
 export default function PathfindingPage() {
   const { user, loading: authLoading } = useAuth();
-  const router = useRouter();
 
   const [profile, setProfile] = useState<ProfileSummary | null>(null);
   const [loadingProfile, setLoadingProfile] = useState(true);
@@ -107,11 +108,10 @@ export default function PathfindingPage() {
   const [targetUniversity, setTargetUniversity] = useState("");
 
   useEffect(() => {
-    if (!authLoading && !user) router.push("/login");
-  }, [user, authLoading, router]);
-
-  useEffect(() => {
-    if (!user) return;
+    if (!user) {
+      setLoadingProfile(false);
+      return;
+    }
     fetch("/api/pathfinding")
       .then((r) => r.json())
       .then((d) => {
@@ -128,6 +128,10 @@ export default function PathfindingPage() {
   }, [user]);
 
   async function handleAnalyze() {
+    if (!user) {
+      toast.error("กรุณาเข้าสู่ระบบก่อนใช้งาน");
+      return;
+    }
     if (!targetField) {
       toast.error("กรุณาเลือกสาขา/คณะที่สนใจก่อน");
       return;
@@ -153,7 +157,7 @@ export default function PathfindingPage() {
     }
   }
 
-  if (authLoading || loadingProfile) {
+  if (authLoading || (user && loadingProfile)) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center space-y-3">
@@ -187,7 +191,19 @@ export default function PathfindingPage() {
           </div>
         </div>
 
-        {result ? (
+        {!user ? (
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 text-center space-y-4">
+            <UserCircle2 className="w-12 h-12 text-gray-300 mx-auto" />
+            <p className="text-gray-700 font-semibold">กรุณาเข้าสู่ระบบก่อนใช้งาน</p>
+            <p className="text-sm text-gray-500">ระบบต้องการข้อมูลโปรไฟล์ของคุณเพื่อวิเคราะห์เส้นทาง TCAS</p>
+            <Link
+              href="/login"
+              className="inline-flex items-center gap-2 bg-pink-600 text-white px-6 py-3 rounded-xl font-semibold hover:bg-pink-700 transition"
+            >
+              เข้าสู่ระบบ <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
+        ) : result ? (
           <ResultView
             result={result}
             profile={profile}
@@ -349,7 +365,9 @@ function ProfileCard({ profile }: { profile: ProfileSummary }) {
 
         {/* Portfolio */}
         <div className="bg-gray-50 rounded-xl p-3 text-center">
-          <div className={`text-xl font-bold ${portInfo.color}`}>{portInfo.emoji}</div>
+          <div className={`flex items-center justify-center ${portInfo.color}`}>
+            <portInfo.icon className="w-6 h-6" />
+          </div>
           <div className="text-xs text-gray-500 mt-1">
             พอร์ต ({profile.portfolioCount})
           </div>

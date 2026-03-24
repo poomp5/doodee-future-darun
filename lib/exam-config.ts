@@ -4,11 +4,11 @@ export type ExamCountdown = {
   targetDate: string; // ISO date
 };
 
-// Centralized configurable countdown targets
+// Centralized configurable countdown targets — dek70 (TCAS68 / ปีการศึกษา 2568)
 export const examCountdowns: ExamCountdown[] = [
-  { id: "a-level", label: "A-Level", targetDate: "2026-03-14T00:00:00+07:00" },
-  { id: "tpat1", label: "TPAT1", targetDate: "2026-02-14T00:00:00+07:00" },
-  { id: "tgat", label: "TGAT", targetDate: "2025-12-13T00:00:00+07:00" },
-  { id: "tpat2-5", label: "TPAT2-5", targetDate: "2025-12-14T00:00:00+07:00" },
+  { id: "tgat", label: "TGAT/TPAT", targetDate: "2026-12-06T00:00:00+07:00" },
+  { id: "a-level", label: "A-Level", targetDate: "2027-03-20T00:00:00+07:00" },
+  { id: "tcas-r1", label: "TCAS รอบ 1", targetDate: "2026-10-01T00:00:00+07:00" },
+  { id: "tcas-r3", label: "TCAS รอบ 3", targetDate: "2027-05-06T00:00:00+07:00" },
 ];
 

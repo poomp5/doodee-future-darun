@@ -3,7 +3,7 @@ import {
   Bot,
   House,
   ListChecks,
-  Users,
+  Map,
   Upload,
 } from "lucide-react";
 import { Link } from "@/routing";
@@ -65,14 +65,14 @@ export default function BottomBar() {
             </span>
           </button>
         </Link>
-        <Link href="/community" className="w-full">
+        <Link href="/pathfinding" className="w-full">
           <button
             type="button"
             className="w-full h-full inline-flex flex-col items-center justify-center hover:bg-gray-50 group px-1"
           >
-            <Users className="text-gray-700 group-hover:text-pink-600" />
+            <Map className="text-gray-700 group-hover:text-pink-600" />
             <span className="text-xs text-gray-500 group-hover:text-pink-600">
-              {t("community")}
+              {t("pathfinding")}
             </span>
           </button>
         </Link>

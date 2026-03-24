@@ -9,6 +9,25 @@ import {
 import { Link } from "@/routing";
 import { useTranslations } from "next-intl";
 
+export function MobileFooter() {
+  return (
+    <div className="block lg:hidden w-full bg-gray-800 text-gray-400 px-4 py-4 text-center mb-16">
+      <p className="text-xs leading-relaxed">
+        พัฒนาโดย{" "}
+        <a
+          href="https://act.ac.th/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-gray-300 underline underline-offset-2"
+        >
+          โรงเรียนอัสสัมชัญธนบุรี
+        </a>{" "}
+        เพื่อใช้ในการแข่งขัน Darun Hackathon 2026
+      </p>
+    </div>
+  );
+}
+
 export default function BottomBar() {
   const t = useTranslations("nav");
 

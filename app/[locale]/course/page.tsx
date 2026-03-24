@@ -399,7 +399,7 @@ const StudyPlanPage = () => {
         ))}
       </div>
       {/* Card grid skeleton */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
         {[...Array(8)].map((_, i) => (
           <div key={i} className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden animate-pulse">
             <div className="w-full h-40 bg-gray-200" />
@@ -556,7 +556,7 @@ const StudyPlanPage = () => {
               if (allItems.length === 0 && loadingCamphub) {
                 // Show skeleton grid while initial load
                 return (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                  <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                     {[...Array(8)].map((_, i) => (
                       <div key={`init-sk-${i}`} className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden animate-pulse">
                         <div className="w-full h-40 bg-gray-200" />
@@ -582,7 +582,7 @@ const StudyPlanPage = () => {
 
               return (
                 <>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                  <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                     {sortByDeadline(allItems).map((item) => {
                       const CategoryIcon = getCategoryGroupIcon(item.category);
                       const expired = isExpired(item.deadline);

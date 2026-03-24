@@ -397,7 +397,7 @@ export default function TalentPipelinePage() {
                           key={i}
                           className="px-2.5 py-1 bg-pink-50 border border-pink-200 text-pink-700 text-xs font-semibold rounded-full"
                         >
-                          ✦ {s}
+                          {s}
                         </span>
                       ))}
                     </div>

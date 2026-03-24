@@ -5,7 +5,7 @@ import Image from "next/image";
 import { Link } from "@/routing";
 import { useTranslations, useLocale } from "next-intl";
 import { examCountdowns, ExamCountdown } from "@/lib/exam-config";
-import { CalendarRange, Brain, Palette, GraduationCap, FileText, Users, ArrowRight, Settings, ChevronRight, ChevronLeft, Map } from "lucide-react";
+import { Brain, GraduationCap, FileText, ArrowRight, Settings, ChevronRight, ChevronLeft, Map } from "lucide-react";
 import { useAuth } from "@/components/AuthProvider";
 import ForYouWidget from "@/components/recommendations/ForYouWidget";
 import ACTBanner from "@/components/schools/ACTBanner";
@@ -354,15 +354,12 @@ export default function HomePage() {
       </Link>
 
       {/* Quick CTA menu */}
-      <div className="w-full grid grid-cols-3 sm:grid-cols-6 gap-3">
+      <div className="w-full grid grid-cols-4 gap-3">
         {[
           { label: t("menuAnalyse"), href: "/analyse", icon: Brain, color: "bg-pink-500", border: "hover:border-pink-300" },
-          { label: t("menuCourseAndCamp"), href: "/course", icon: GraduationCap, color: "bg-amber-500", border: "hover:border-amber-300" },
-          { label: t("menuMockExamShort"), href: "/mock-exam", icon: FileText, color: "bg-indigo-500", border: "hover:border-indigo-300" },
           { label: t("menuPathfinding"), href: "/pathfinding", icon: Map, color: "bg-rose-600", border: "hover:border-rose-300" },
-          { label: t("menuCommunity"), href: "/community", icon: Users, color: "bg-teal-500", border: "hover:border-teal-300" },
-          { label: t("menuCalendar"), href: "/calendar", icon: CalendarRange, color: "bg-rose-500", border: "hover:border-rose-300" },
-          { label: t("menuTemplates"), href: "/port", icon: Palette, color: "bg-purple-500", border: "hover:border-purple-300" },
+          { label: t("menuMockExamShort"), href: "/mock-exam", icon: FileText, color: "bg-indigo-500", border: "hover:border-indigo-300" },
+          { label: t("menuCourseAndCamp"), href: "/course", icon: GraduationCap, color: "bg-amber-500", border: "hover:border-amber-300" },
         ].map((cta) => (
           <Link
             key={cta.href}

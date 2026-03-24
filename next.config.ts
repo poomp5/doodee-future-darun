@@ -35,6 +35,12 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: 'https',
+        hostname: 'cdn-darun.poomp5.com',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
         hostname: '*.r2.cloudflarestorage.com',
         port: '',
         pathname: '/**',

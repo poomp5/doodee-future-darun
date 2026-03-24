@@ -5,7 +5,7 @@ import Image from "next/image";
 import { Link } from "@/routing";
 import { useTranslations, useLocale } from "next-intl";
 import { examCountdowns, ExamCountdown } from "@/lib/exam-config";
-import { Brain, GraduationCap, FileText, ArrowRight, Settings, ChevronRight, ChevronLeft, Map } from "lucide-react";
+import { Brain, Users, FileText, GraduationCap, ArrowRight, Settings, ChevronRight, ChevronLeft, Map } from "lucide-react";
 import { useAuth } from "@/components/AuthProvider";
 import ForYouWidget from "@/components/recommendations/ForYouWidget";
 import ACTBanner from "@/components/schools/ACTBanner";
@@ -356,20 +356,20 @@ export default function HomePage() {
       {/* Quick CTA menu */}
       <div className="w-full grid grid-cols-4 gap-3">
         {[
-          { label: t("menuAnalyse"), href: "/analyse", icon: Brain, color: "bg-pink-500", border: "hover:border-pink-300" },
-          { label: t("menuPathfinding"), href: "/pathfinding", icon: Map, color: "bg-rose-600", border: "hover:border-rose-300" },
-          { label: t("menuMockExamShort"), href: "/mock-exam", icon: FileText, color: "bg-indigo-500", border: "hover:border-indigo-300" },
-          { label: t("menuCourseAndCamp"), href: "/course", icon: GraduationCap, color: "bg-amber-500", border: "hover:border-amber-300" },
+          { label: t("menuAnalyse"), href: "/analyse", icon: Brain, iconColor: "text-pink-600", iconBg: "bg-pink-50", hoverBg: "hover:bg-pink-50", border: "border-pink-100" },
+          { label: t("menuPathfinding"), href: "/pathfinding", icon: Map, iconColor: "text-rose-600", iconBg: "bg-rose-50", hoverBg: "hover:bg-rose-50", border: "border-rose-100" },
+          { label: t("menuMockExamShort"), href: "/mock-exam", icon: FileText, iconColor: "text-indigo-600", iconBg: "bg-indigo-50", hoverBg: "hover:bg-indigo-50", border: "border-indigo-100" },
+          { label: t("menuCommunity"), href: "/community", icon: Users, iconColor: "text-teal-600", iconBg: "bg-teal-50", hoverBg: "hover:bg-teal-50", border: "border-teal-100" },
         ].map((cta) => (
           <Link
             key={cta.href}
             href={cta.href}
-            className={`w-full aspect-square bg-white border border-gray-200 shadow-sm rounded-2xl flex flex-col items-center justify-center gap-2 text-sm font-semibold text-gray-800 ${cta.border} hover:shadow-md hover:-translate-y-1 transition-all duration-200`}
+            className={`group w-full aspect-square bg-white border ${cta.border} rounded-2xl flex flex-col items-center justify-center gap-2.5 ${cta.hoverBg} hover:shadow-sm hover:-translate-y-0.5 transition-all duration-200`}
           >
-            <div className={`w-12 h-12 rounded-full ${cta.color} flex items-center justify-center shadow-sm`}>
-              <cta.icon className="w-6 h-6 text-white" />
+            <div className={`w-11 h-11 rounded-xl ${cta.iconBg} flex items-center justify-center`}>
+              <cta.icon className={`w-5 h-5 ${cta.iconColor}`} />
             </div>
-            <span className="px-3 text-center leading-tight text-xs sm:text-sm">{cta.label}</span>
+            <span className={`px-2 text-center leading-tight text-xs font-semibold ${cta.iconColor}`}>{cta.label}</span>
           </Link>
         ))}
       </div>
